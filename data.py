@@ -1,6 +1,7 @@
+from copy import copy
 from types import CellType
 import openpyxl
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill 
 
 
 def remove_empty(ws): 
@@ -19,9 +20,9 @@ def unmerge_cells(ws):
         # Separamos esas celdas mergeadas
         ws.unmerge_cells(range_string=str(merge))
 
-def remove(ws): 
+def remove(ws,ini,end): 
     '''Metodo que sirve para borrar todas las filas de 1 a 11'''
-    ws.delete_rows(1, 11)
+    ws.delete_rows(ini,end)
 
 
 def change_colour(ws): 
@@ -36,6 +37,8 @@ def change_colour(ws):
     for i_row in range(1, max_row + 1):
        for i_column in range(1, max_column + 1):
            cell = ws.cell(row = i_row, column = i_column)
+           #If ((cell.fill.fgcolor.type == 'indexed' and cell.fill.fgcolor.indexed == 43) or
+           #(cell.fill.fgcolor.type == 'rgb' and cell.fill.fgcolor.rgb == 'FFFFFF99')):
            # Cambia para todas las celdas el fondo a blanco
            cell.fill = PatternFill(start_color="FFFFFFFF", end_color="FFFFFFFF", fill_type = "solid")
 
@@ -59,3 +62,49 @@ def remove_formatting(ws):
     for i_row in range(filas, 0, -1):
         for cell in ws[i_row]:
             cell.style = 'Normal'
+def copyStyle(newCell, cell): 
+    '''Metodo que copia el formato de una celda a una nueva '''
+    if cell.has_style: 
+        newCell.style = copy(cell.style) 
+        newCell.font = copy(cell.font) 
+        newCell.border = copy(cell.border) 
+        newCell.fill = copy(cell.fill) 
+        newCell.number_format = copy(cell.number_format) 
+        newCell.protection = copy(cell.protection) 
+        newCell.alignment = copy(cell.alignment)
+  
+def insert_column(ws, colNr ,headerRow , headerVal):
+    '''Metodo que inserta una columna nueva detrás de la columna H poniendo la cabecera'''
+    ws.insert_cols(colNr)
+    #añadimos el título a la columna 
+    ws.cell(row=headerRow, column=colNr).value = headerVal
+
+def format_column(ws, colNr):
+    '''Metodo que da formato a la columna que se ha creado'''
+    max_row = ws.max_row
+    #recorremos todas las celdas de la columna H para copiar su formato a la nueva columna mediante el método
+    #copyStyle definido más arriba
+    for i_row in range(1, max_row + 1):
+        cell_new = ws.cell(row=i_row, column= colNr)
+        cell_origin = ws.cell(row=i_row, column=colNr-1)
+        copyStyle(cell_new, cell_origin)
+
+    #max_col = ws.max_column
+    #for col in ws.iter_cols(min_col = 8, max_col = 8):
+        #cell_new = col[8]
+        #cell_origin = col[7]
+        #cell_condition = ws.cell(row=i_row, column= colNr-3)
+        
+
+def format_condition(ws, colNr, condition, color):     
+    '''Metodo que da formato a la columna que se ha creado según criterio'''   
+    #Si la celda de la columna F (Additional Notes) es igual a CRITICA se cambia el fondo de la celda de la
+     #columna nueva (I - FTES. Pdtes.) a amarillo
+    max_row = ws.max_row    
+    for i_row in range(1, max_row + 1):   
+        cell_new = ws.cell(row=i_row, column= colNr)
+        cell_condition = ws.cell(row=i_row, column= colNr-3)
+        if cell_condition.value == condition:
+           cell_new.fill = color
+
+      
