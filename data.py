@@ -44,5 +44,16 @@ def change_colour(ws):
         #cells_yellows = all([cell.fill is style_yellow for cell in ws[i]])
         
         #if cells_yellows  == style_yellow:
-            cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type = "solid")
+            cell.fill = PatternFill(start_color="FFFFFF", end_color=None, fill_type = None)
            
+def remove_ormatting(ws):
+    # ws is not the worksheet name, but the worksheet object
+    filas = ws.max_row
+    for i_row in range(filas, 0, -1):
+        for cell in ws[i_row]:
+            cell.style = 'Normal'
+
+def unmerge_cells(ws):
+    print(ws.merged_cells)
+    for merge in list(ws.merged_cells):
+        ws.unmerge_cells(range_string=str(merge))

@@ -3,15 +3,17 @@
 #from openpyxl import Workbook
 import openpyxl
 
-from data import change_colour, remove
+from data import change_colour, remove, unmerge_cells
 #Damos la localización del fichero 
-ruta_input = "C:\\Users\\pelviram\\COREPY\\CedazoExcel\\in.xlsx"
-ruta_output = "C:\\Users\\pelviram\\COREPY\\CedazoExcel\\out.xlsx"
+ruta_input = "C:\\Users\\debarrei\\Documents\\FORMACION-CREW VERVE\\EJERCICIOS\\CedazoExcel\\in.xlsx"
+ruta_output = "C:\\Users\\debarrei\\Documents\\FORMACION-CREW VERVE\\EJERCICIOS\\CedazoExcel\\out.xlsx"
 wb = openpyxl.load_workbook(ruta_input)
 ws = wb.active 
 #for row in ws: 
+unmerge_cells(ws)
 remove(ws)
 change_colour(ws)
+
 wb.save(ruta_output)
 
 
